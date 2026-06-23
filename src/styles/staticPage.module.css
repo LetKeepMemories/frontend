@@ -1,0 +1,98 @@
+.hero {
+  padding: 4rem 0 2rem;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.hero p {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.section {
+  padding: 2rem 0 4rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.card {
+  padding: 1.75rem;
+  border-radius: var(--radius-xl);
+}
+
+.card h3 {
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+}
+
+.card p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose {
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.prose h2 {
+  color: var(--text-main);
+  font-size: 1.3rem;
+  margin: 2rem 0 0.75rem;
+}
+
+.prose p {
+  margin-bottom: 1rem;
+}
+
+.note {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.ctaRow {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.btnPrimary {
+  display: inline-block;
+  background-color: var(--primary);
+  color: white;
+  padding: 0.85rem 1.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btnPrimary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.contactLink {
+  font-weight: 600;
+  color: var(--primary);
+}
