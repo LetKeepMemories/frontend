@@ -316,25 +316,27 @@ export default function GuestWishView() {
       
       const { uploadToCloudinary } = await import('@/lib/cloudinary');
       
+      const signatureEndpoint = `/public/occasions/${slug}/media-signature/`;
+
       // Upload Images
       for (let i = 0; i < images.length; i++) {
         setUploadProgress(`Uploading image ${i + 1} of ${images.length}...`);
-        const url = await uploadToCloudinary(images[i], `/occasions/${occasion?.id}/gallery-signature/`, 'image');
+        const url = await uploadToCloudinary(images[i], signatureEndpoint, 'image', 'IMAGE');
         uploadedMedia.push({ media_type: 'IMAGE', url: url, file_size: images[i].size });
       }
-      
+
       // Upload Video
       if (video) {
         setUploadProgress(`Uploading video... (this may take a moment)`);
-        const url = await uploadToCloudinary(video, `/occasions/${occasion?.id}/gallery-signature/`, 'video');
+        const url = await uploadToCloudinary(video, signatureEndpoint, 'video', 'VIDEO');
         uploadedMedia.push({ media_type: 'VIDEO', url: url, file_size: video.size });
       }
-      
+
       // Upload Audio
       if (audio) {
         setUploadProgress(`Uploading voice note...`);
         // We use 'video' for audio files as well per Cloudinary standard for raw audio/video
-        const url = await uploadToCloudinary(audio, `/occasions/${occasion?.id}/gallery-signature/`, 'video');
+        const url = await uploadToCloudinary(audio, signatureEndpoint, 'video', 'AUDIO');
         uploadedMedia.push({ media_type: 'AUDIO', url: url, file_size: audio.size });
       }
 

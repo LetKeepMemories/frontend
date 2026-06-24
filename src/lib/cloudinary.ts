@@ -9,12 +9,14 @@ interface UploadSignature {
 }
 
 export async function uploadToCloudinary(
-  file: File, 
+  file: File,
   signatureEndpoint: string = '/occasions/profile-image-signature/',
-  resourceType: 'image' | 'video' | 'auto' | 'raw' = 'image'
+  resourceType: 'image' | 'video' | 'auto' | 'raw' = 'image',
+  mediaType?: 'IMAGE' | 'VIDEO' | 'AUDIO'
 ): Promise<string> {
   const signatureResponse = await api.post<UploadSignature>(signatureEndpoint, {
-    estimated_file_size: file.size
+    estimated_file_size: file.size,
+    ...(mediaType ? { media_type: mediaType } : {}),
   });
   const { signature, timestamp, api_key, cloud_name, folder } = signatureResponse.data;
 

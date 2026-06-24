@@ -13,8 +13,12 @@ interface EventType {
   slug: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
-const DJANGO_ADMIN_URL = `${API_BASE_URL.replace(/\/api\/?$/, '')}/admin`;
+// NEXT_PUBLIC_API_URL is "/api" (proxied through this same origin), so the
+// Django admin link needs the backend's actual domain separately — it's a
+// real page navigation, not a fetch, so it isn't subject to the cross-origin
+// cookie issues the API proxy works around.
+const BACKEND_ORIGIN = process.env.NEXT_PUBLIC_BACKEND_ORIGIN || 'http://localhost:8000';
+const DJANGO_ADMIN_URL = `${BACKEND_ORIGIN}/admin`;
 
 const ADMIN_LINKS = [
   { href: '/admin', label: 'Overview' },
