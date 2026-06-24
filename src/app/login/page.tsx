@@ -19,28 +19,23 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [needsVerification, setNeedsVerification] = useState(false);
-  const { login, isLoggingIn, resendVerification, isResendingVerification } = useAuth();
+  const { login, isLoggingIn } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
-    setNeedsVerification(false);
     try {
       await login({ email, password });
       router.push('/dashboard');
     } catch (err: unknown) {
+      if (getErrorCode(err) === 'email_not_verified') {
+        // Verification screen has its own "Resend code" button — we don't
+        // send a code here, just get them to where they can ask for one.
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+        return;
+      }
       setError(getErrorMessage(err, 'Login failed. Please check your credentials.'));
-      setNeedsVerification(getErrorCode(err) === 'email_not_verified');
-    }
-  };
-
-  const handleResend = async () => {
-    try {
-      await resendVerification(email);
-    } finally {
-      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
     }
   };
 
@@ -54,23 +49,7 @@ export default function Login() {
           <ResetSuccessBanner />
         </Suspense>
 
-        {error && (
-          <div className={styles.error}>
-            {error}
-            {needsVerification && (
-              <div className={styles.errorActions}>
-                <button
-                  type="button"
-                  onClick={handleResend}
-                  disabled={isResendingVerification}
-                  className={styles.btnSecondary}
-                >
-                  {isResendingVerification ? 'Sending...' : 'Resend verification email'}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+        {error && <div className={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.inputGroup}>
