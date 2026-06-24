@@ -8,6 +8,10 @@ import type { NextConfig } from "next";
 const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN || "http://localhost:8000";
 
 const nextConfig: NextConfig = {
+  // Django's URLs are trailing-slash-sensitive (APPEND_SLASH); without this,
+  // Next.js strips the trailing slash and redirects before our rewrite ever
+  // runs, breaking every proxied API call.
+  skipTrailingSlashRedirect: true,
   async rewrites() {
     return [
       { source: "/api/:path*", destination: `${BACKEND_ORIGIN}/api/:path*` },
