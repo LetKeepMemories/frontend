@@ -8,8 +8,14 @@ interface UploadSignature {
   folder: string;
 }
 
-export async function uploadImageToCloudinary(file: File): Promise<string> {
-  const signatureResponse = await api.post<UploadSignature>('/occasions/profile-image-signature/');
+export async function uploadToCloudinary(
+  file: File, 
+  signatureEndpoint: string = '/occasions/profile-image-signature/',
+  resourceType: 'image' | 'video' | 'auto' | 'raw' = 'image'
+): Promise<string> {
+  const signatureResponse = await api.post<UploadSignature>(signatureEndpoint, {
+    estimated_file_size: file.size
+  });
   const { signature, timestamp, api_key, cloud_name, folder } = signatureResponse.data;
 
   const formData = new FormData();
@@ -19,16 +25,15 @@ export async function uploadImageToCloudinary(file: File): Promise<string> {
   formData.append('signature', signature);
   formData.append('folder', folder);
 
-  // Uploads straight to Cloudinary, not through our backend — the signed
-  // params above prove this request was authorized without ever exposing
-  // the API secret to the browser.
-  const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
+  const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/${resourceType}/upload`, {
     method: 'POST',
     body: formData,
   });
 
   if (!uploadResponse.ok) {
-    throw new Error('Failed to upload image.');
+    const errorData = await uploadResponse.text();
+    console.error("Cloudinary upload failed:", uploadResponse.status, errorData);
+    throw new Error('Failed to upload file.');
   }
 
   const data = await uploadResponse.json();

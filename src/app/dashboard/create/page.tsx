@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState, Suspense } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import api from '@/lib/api';
 import { getErrorMessage } from '@/lib/errors';
-import { uploadImageToCloudinary } from '@/lib/cloudinary';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -68,6 +68,7 @@ function CreateOccasionContent() {
   }
   const [status, setStatus] = useState('published');
   const [slug, setSlug] = useState('');
+  const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
   
   // Names
   const [firstName, setFirstName] = useState('');
@@ -116,6 +117,22 @@ function CreateOccasionContent() {
       galleryPreviews.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [galleryPreviews]);
+
+  // Auto-generate slug
+  useEffect(() => {
+    if (!isSlugManuallyEdited && (title || firstName || lastName)) {
+      const parts = [];
+      if (title) {
+        parts.push(title);
+      } else {
+        if (eventType) parts.push(eventType);
+        if (firstName) parts.push(firstName);
+        if (lastName) parts.push(lastName);
+      }
+      const generated = parts.join('-').toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      setSlug(generated);
+    }
+  }, [title, eventType, firstName, lastName, isSlugManuallyEdited]);
 
   const { data: eventTypes } = useQuery<EventType[]>({
     queryKey: ['eventTypes'],
@@ -204,7 +221,7 @@ function CreateOccasionContent() {
       for (let i = 0; i < galleryFiles.length; i++) {
         setGalleryUploadStatus(`Uploading photo ${i + 1} of ${galleryFiles.length}...`);
         try {
-          const imageUrl = await uploadImageToCloudinary(galleryFiles[i]);
+          const imageUrl = await uploadToCloudinary(galleryFiles[i]);
           await api.post(`/occasions/${occasionId}/gallery/`, { image_url: imageUrl });
         } catch {
           // The occasion itself was created successfully — don't block
@@ -262,7 +279,7 @@ function CreateOccasionContent() {
                   <label htmlFor="slug">Custom URL (Optional)</label>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-color)', borderRight: 'none', borderRadius: 'var(--radius-md) 0 0 var(--radius-md)', color: 'var(--text-muted)' }}>/</span>
-                    <input id="slug" type="text" placeholder="e.g. john-50th" value={slug} onChange={(e) => setSlug(e.target.value)} className={styles.input} style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }} />
+                    <input id="slug" type="text" placeholder="e.g. john-50th" value={slug} onChange={(e) => { setSlug(e.target.value); setIsSlugManuallyEdited(true); }} className={styles.input} style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }} />
                   </div>
                 </div>
 
@@ -311,15 +328,40 @@ function CreateOccasionContent() {
                       </div>
                     </div>
                     <div className={styles.inputGroup}>
-                      <label>Relationship</label>
-                      <select value={relationship} onChange={(e) => setRelationship(e.target.value)} className={styles.input}>
-                        <option value="">Select relationship...</option>
-                        <option value="Parent">Parent</option>
-                        <option value="Sibling">Sibling</option>
-                        <option value="Spouse">Spouse</option>
-                        <option value="Friend">Friend</option>
-                        <option value="Other">Other</option>
-                      </select>
+                      <label>Relationship to Honoree (Optional)</label>
+                      <input 
+                        type="text" 
+                        list="relationship-options"
+                        placeholder="Search or type e.g. Friend, Sister"
+                        value={relationship} 
+                        onChange={(e) => setRelationship(e.target.value)} 
+                        className={styles.input} 
+                      />
+                      <datalist id="relationship-options">
+                        <option value="Friend" />
+                        <option value="Best Friend" />
+                        <option value="Mother" />
+                        <option value="Father" />
+                        <option value="Sister" />
+                        <option value="Brother" />
+                        <option value="Daughter" />
+                        <option value="Son" />
+                        <option value="Grandmother" />
+                        <option value="Grandfather" />
+                        <option value="Aunt" />
+                        <option value="Uncle" />
+                        <option value="Cousin" />
+                        <option value="Niece" />
+                        <option value="Nephew" />
+                        <option value="Colleague" />
+                        <option value="Boss" />
+                        <option value="Mentor" />
+                        <option value="Student" />
+                        <option value="Neighbor" />
+                        <option value="Partner" />
+                        <option value="Spouse" />
+                        <option value="Acquaintance" />
+                      </datalist>
                     </div>
                     <div className={styles.inputGroup}>
                       <label>Designation</label>
@@ -342,7 +384,7 @@ function CreateOccasionContent() {
                     <div className={styles.nameRow}>
                       <input type="text" placeholder="City or town" value={birthCity} onChange={(e) => setBirthCity(e.target.value)} className={styles.input} />
                       <input type="text" placeholder="State or area" value={birthState} onChange={(e) => setBirthState(e.target.value)} className={styles.input} />
-                      <input type="text" placeholder="Country" value={birthCountry} onChange={(e) => setBirthCountry(e.target.value)} className={styles.input} />
+                      <input type="text" list="country-options" placeholder="Country" value={birthCountry} onChange={(e) => setBirthCountry(e.target.value)} className={styles.input} />
                     </div>
                   </div>
 
@@ -357,7 +399,7 @@ function CreateOccasionContent() {
                     <div className={styles.nameRow}>
                       <input type="text" placeholder="City or town" value={deathCity} onChange={(e) => setDeathCity(e.target.value)} className={styles.input} />
                       <input type="text" placeholder="State or area" value={deathState} onChange={(e) => setDeathState(e.target.value)} className={styles.input} />
-                      <input type="text" placeholder="Country" value={deathCountry} onChange={(e) => setDeathCountry(e.target.value)} className={styles.input} />
+                      <input type="text" list="country-options" placeholder="Country" value={deathCountry} onChange={(e) => setDeathCountry(e.target.value)} className={styles.input} />
                     </div>
                   </div>
                 </div>
@@ -513,6 +555,38 @@ function CreateOccasionContent() {
           </form>
         </div>
       </main>
+
+      {/* Reusable datalist for countries */}
+      <datalist id="country-options">
+        <option value="United States" />
+        <option value="Canada" />
+        <option value="United Kingdom" />
+        <option value="Australia" />
+        <option value="New Zealand" />
+        <option value="Ireland" />
+        <option value="India" />
+        <option value="South Africa" />
+        <option value="Germany" />
+        <option value="France" />
+        <option value="Italy" />
+        <option value="Spain" />
+        <option value="Mexico" />
+        <option value="Brazil" />
+        <option value="Japan" />
+        <option value="China" />
+        <option value="South Korea" />
+        <option value="Netherlands" />
+        <option value="Sweden" />
+        <option value="Norway" />
+        <option value="Denmark" />
+        <option value="Finland" />
+        <option value="Switzerland" />
+        <option value="Singapore" />
+        <option value="United Arab Emirates" />
+        <option value="Nigeria" />
+        <option value="Kenya" />
+        <option value="Ghana" />
+      </datalist>
     </div>
   );
 }

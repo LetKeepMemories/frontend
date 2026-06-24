@@ -1,23 +1,32 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import styles from './Footer.module.css';
 
 export default function Footer() {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Same reasoning as Header: resolvedTheme is only known after hydration,
+  // and a manual theme toggle can't be observed via prefers-color-scheme.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.container}`}>
         <div className={styles.brand}>
           <Link href="/" className={styles.logoLink}>
-            <picture>
-              <source srcSet="/logos/logo-dark.jpg" media="(prefers-color-scheme: dark)" />
-              <Image
-                src="/logos/logo-light.jpg"
-                alt="Lets Keep Memories Logo"
-                width={150}
-                height={30}
-                className={styles.logo}
-              />
-            </picture>
+            <Image
+              src={mounted && resolvedTheme === 'dark' ? '/logos/back_mode.png' : '/logos/logo_light.png'}
+              alt="Lets Keep Memories Logo"
+              width={100}
+              height={100}
+              className={styles.logo}
+            />
           </Link>
           <p className={styles.description}>
             Preserve life moments, celebrate milestones, and create lasting digital collections of messages, images, videos, and voice memories.

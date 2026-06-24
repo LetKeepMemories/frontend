@@ -55,7 +55,7 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState('');
   const { requestPasswordChangeOtp, isRequestingPasswordChangeOtp, confirmPasswordChangeOtp, isConfirmingPasswordChangeOtp } = useAuth();
 
-  const [loadedUser, setLoadedUser] = useState(user);
+  const [loadedUser, setLoadedUser] = useState<typeof user | null>(null);
   if (user && user !== loadedUser) {
     setLoadedUser(user);
     setFirstName(user.first_name || '');
@@ -81,19 +81,20 @@ export default function ProfilePage() {
   });
 
   const [isInitializingPayment, setIsInitializingPayment] = useState<number | null>(null);
+  const [paymentError, setPaymentError] = useState('');
 
   const handleUpgrade = async (planId: number) => {
     setIsInitializingPayment(planId);
-    setError('');
-    setSuccess('');
+    setPaymentError('');
     try {
       const response = await api.post('/payments/initialize/', { plan_id: planId });
       if (response.data.authorization_url) {
         window.location.assign(response.data.authorization_url);
       }
     } catch (err: unknown) {
-      setError(getErrorMessage(err, 'Failed to initialize payment.'));
+      setPaymentError(getErrorMessage(err, 'Failed to initialize payment.'));
       setIsInitializingPayment(null);
+      setTimeout(() => setPaymentError(''), 5000);
     }
   };
 
@@ -169,6 +170,7 @@ export default function ProfilePage() {
 
   return (
     <div className={styles.container}>
+      {paymentError && <div className={styles.toastError}>{paymentError}</div>}
       <main className={`container ${styles.main}`}>
         <h1 className={styles.pageTitle}>My Profile</h1>
         

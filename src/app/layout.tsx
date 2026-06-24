@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable}`}>
         <Providers>
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

@@ -37,9 +37,8 @@ export default function AdminOccasionsPage() {
   const { data: occasions, isLoading } = useQuery<AdminOccasion[]>({
     queryKey: ['adminOccasions'],
     queryFn: async () => {
-      // Paginated ({count, next, previous, results}); unwrap to the array.
       const response = await api.get('/admin/occasions/');
-      return response.data.results;
+      return Array.isArray(response.data) ? response.data : (response.data.results || []);
     },
     enabled: isAuthenticated && user?.user_type === 'admin',
   });

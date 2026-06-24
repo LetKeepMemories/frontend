@@ -20,12 +20,13 @@
 .brand {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 1rem;
 }
 
 .logo {
   object-fit: contain;
-  height: 30px;
+  height: 100px;
   width: auto;
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './GalleryCarousel.module.css';
 
 interface GalleryImage {
@@ -15,6 +15,12 @@ export default function GalleryCarousel({ images }: { images: GalleryImage[] }) 
 
   const goPrev = () => setIndex((i) => (i === 0 ? images.length - 1 : i - 1));
   const goNext = () => setIndex((i) => (i === images.length - 1 ? 0 : i + 1));
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const interval = setInterval(goNext, 5000);
+    return () => clearInterval(interval);
+  }, [images.length]);
 
   return (
     <div className={styles.carousel}>

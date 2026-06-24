@@ -13,17 +13,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 70px;
+  height: 100px;
 }
 
 .logoLink {
   display: flex;
   align-items: center;
+  margin-left: -1rem;
 }
 
 .logo {
   object-fit: contain;
-  height: 56px;
+  height: 120px;
   width: auto;
 }
 

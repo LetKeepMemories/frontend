@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
@@ -36,17 +37,17 @@ export default function Header() {
     <header className={`${styles.header} glass`}>
       <div className={`container ${styles.container}`}>
         <Link href="/" className={styles.logoLink}>
-          <picture>
-            <source srcSet="/logos/logo-light-rembg.png" media="(prefers-color-scheme: dark)" />
-            <source srcSet="/logos/logo-light-rembg.png" media="[data-theme='dark']" />
-            <img
-              src="/logos/logo-dark-rembg.png"
-              alt="Lets Keep Memories Logo"
-              width="280"
-              height="56"
-              className={styles.logo}
-            />
-          </picture>
+          {/* <picture><source media="prefers-color-scheme"> can't see next-themes'
+              data-theme attribute, so a manual toggle would silently stop updating
+              the logo — render straight off resolvedTheme instead. */}
+          <Image
+            src={mounted && resolvedTheme === 'dark' ? '/logos/back_mode.png' : '/logos/light_full.png'}
+            alt="Lets Keep Memories Logo"
+            width={mounted && resolvedTheme === 'dark' ? 120 : 350}
+            height={120}
+            className={styles.logo}
+            priority
+          />
         </Link>
 
         <button

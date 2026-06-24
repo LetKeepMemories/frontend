@@ -75,10 +75,12 @@
 
 .btnOutline {
   color: var(--primary);
+  background: transparent;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
   font-weight: 500;
   border: 1px solid var(--primary);
+  cursor: pointer;
   transition: all 0.2s;
 }
 

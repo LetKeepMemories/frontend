@@ -16,7 +16,12 @@ interface AdminSubscriptionConfig {
   max_storage: number;
   allow_video: boolean;
   allow_audio_message: boolean;
-  max_video_size: number;
+  max_upload_image_size_mb: number;
+  max_upload_video_size_mb: number;
+  max_upload_audio_size_mb: number;
+  max_images_per_message: number;
+  max_videos_per_message: number;
+  max_audio_per_message: number;
   max_gallery_images: number;
 }
 
@@ -27,7 +32,12 @@ interface ConfigFormState {
   max_storage: string;
   allow_video: boolean;
   allow_audio_message: boolean;
-  max_video_size: string;
+  max_upload_image_size_mb: string;
+  max_upload_video_size_mb: string;
+  max_upload_audio_size_mb: string;
+  max_images_per_message: string;
+  max_videos_per_message: string;
+  max_audio_per_message: string;
   max_gallery_images: string;
 }
 
@@ -39,7 +49,12 @@ function configToForm(config: AdminSubscriptionConfig): ConfigFormState {
     max_storage: String(config.max_storage),
     allow_video: config.allow_video,
     allow_audio_message: config.allow_audio_message,
-    max_video_size: String(config.max_video_size),
+    max_upload_image_size_mb: String(config.max_upload_image_size_mb),
+    max_upload_video_size_mb: String(config.max_upload_video_size_mb),
+    max_upload_audio_size_mb: String(config.max_upload_audio_size_mb),
+    max_images_per_message: String(config.max_images_per_message),
+    max_videos_per_message: String(config.max_videos_per_message),
+    max_audio_per_message: String(config.max_audio_per_message),
     max_gallery_images: String(config.max_gallery_images),
   };
 }
@@ -84,7 +99,12 @@ export default function AdminConfigPage() {
         max_storage: Number(values.max_storage),
         allow_video: values.allow_video,
         allow_audio_message: values.allow_audio_message,
-        max_video_size: Number(values.max_video_size),
+        max_upload_image_size_mb: Number(values.max_upload_image_size_mb),
+        max_upload_video_size_mb: Number(values.max_upload_video_size_mb),
+        max_upload_audio_size_mb: Number(values.max_upload_audio_size_mb),
+        max_images_per_message: Number(values.max_images_per_message),
+        max_videos_per_message: Number(values.max_videos_per_message),
+        max_audio_per_message: Number(values.max_audio_per_message),
         max_gallery_images: Number(values.max_gallery_images),
       };
       const response = await api.patch('/admin/config/', payload);
@@ -130,6 +150,7 @@ export default function AdminConfigPage() {
         <div>Loading current limits...</div>
       ) : (
         <form onSubmit={handleSubmit} className={styles.formCard}>
+          <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', marginTop: '0.5rem' }}>Admin Owner Allowances</h2>
           <div className={styles.formRow}>
             <div className={styles.inputGroup}>
               <label htmlFor="max_images_count">Max Images / Occasion</label>
@@ -178,28 +199,6 @@ export default function AdminConfigPage() {
                 className={styles.input}
               />
             </div>
-            <div className={styles.inputGroup}>
-              <label htmlFor="max_video_size">Max Video Size (MB)</label>
-              <input
-                id="max_video_size"
-                type="number"
-                min="0"
-                value={form.max_video_size}
-                onChange={(e) => setForm({ ...form, max_video_size: e.target.value })}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <label htmlFor="max_gallery_images">Max Gallery Images (all occasions)</label>
-              <input
-                id="max_gallery_images"
-                type="number"
-                min="0"
-                value={form.max_gallery_images}
-                onChange={(e) => setForm({ ...form, max_gallery_images: e.target.value })}
-                className={styles.input}
-              />
-            </div>
           </div>
 
           <div className={styles.formRow}>
@@ -219,6 +218,94 @@ export default function AdminConfigPage() {
               />
               Allow audio messages
             </label>
+          </div>
+
+          <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', marginTop: '2rem', borderTop: '1px solid var(--border)', paddingTop: '2rem' }}>Global Config</h2>
+          
+          <div className={styles.formRow}>
+            <div className={styles.inputGroup}>
+              <label htmlFor="max_images_per_message">Max Images / Message</label>
+              <input
+                id="max_images_per_message"
+                type="number"
+                min="0"
+                value={form.max_images_per_message}
+                onChange={(e) => setForm({ ...form, max_images_per_message: e.target.value })}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label htmlFor="max_videos_per_message">Max Videos / Message</label>
+              <input
+                id="max_videos_per_message"
+                type="number"
+                min="0"
+                value={form.max_videos_per_message}
+                onChange={(e) => setForm({ ...form, max_videos_per_message: e.target.value })}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label htmlFor="max_audio_per_message">Max Audio / Message</label>
+              <input
+                id="max_audio_per_message"
+                type="number"
+                min="0"
+                value={form.max_audio_per_message}
+                onChange={(e) => setForm({ ...form, max_audio_per_message: e.target.value })}
+                className={styles.input}
+              />
+            </div>
+          </div>
+
+          <div className={styles.formRow}>
+            <div className={styles.inputGroup}>
+              <label htmlFor="max_upload_image_size_mb">Max Image Upload Size (MB)</label>
+              <input
+                id="max_upload_image_size_mb"
+                type="number"
+                min="0"
+                value={form.max_upload_image_size_mb}
+                onChange={(e) => setForm({ ...form, max_upload_image_size_mb: e.target.value })}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label htmlFor="max_upload_video_size_mb">Max Video Upload Size (MB)</label>
+              <input
+                id="max_upload_video_size_mb"
+                type="number"
+                min="0"
+                value={form.max_upload_video_size_mb}
+                onChange={(e) => setForm({ ...form, max_upload_video_size_mb: e.target.value })}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label htmlFor="max_upload_audio_size_mb">Max Audio Upload Size (MB)</label>
+              <input
+                id="max_upload_audio_size_mb"
+                type="number"
+                min="0"
+                value={form.max_upload_audio_size_mb}
+                onChange={(e) => setForm({ ...form, max_upload_audio_size_mb: e.target.value })}
+                className={styles.input}
+              />
+            </div>
+          </div>
+          
+          <div className={styles.formRow}>
+            <div className={styles.inputGroup}>
+              <label htmlFor="max_gallery_images">Max Gallery Images (all occasions)</label>
+              <input
+                id="max_gallery_images"
+                type="number"
+                min="0"
+                value={form.max_gallery_images}
+                onChange={(e) => setForm({ ...form, max_gallery_images: e.target.value })}
+                className={styles.input}
+              />
+            </div>
           </div>
 
           <div className={styles.formActions}>

@@ -5,7 +5,7 @@ import { useState, Suspense, use } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import api from '@/lib/api';
 import { getErrorMessage } from '@/lib/errors';
-import { uploadImageToCloudinary } from '@/lib/cloudinary';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 import { useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -64,7 +64,7 @@ function SettingsContent({ id }: { id: string }) {
 
   // Populate the form from the fetched occasion without setState in an
   // Effect: adjust state during render when a new occasion comes in.
-  const [loadedOccasion, setLoadedOccasion] = useState(occasion);
+  const [loadedOccasion, setLoadedOccasion] = useState<Occasion | null>(null);
   if (occasion && occasion !== loadedOccasion) {
     setLoadedOccasion(occasion);
     setTitle(occasion.title || '');
@@ -101,8 +101,8 @@ function SettingsContent({ id }: { id: string }) {
     setIsUploadingGallery(true);
     try {
       for (const file of files) {
-        const imageUrl = await uploadImageToCloudinary(file);
-        await api.post(`/occasions/${id}/gallery/`, { image_url: imageUrl });
+        const imageUrl = await uploadToCloudinary(file, `/occasions/${id}/gallery-signature/`);
+        await api.post(`/occasions/${id}/gallery/`, { image_url: imageUrl, file_size: file.size });
       }
       queryClient.invalidateQueries({ queryKey: ['occasion', id] });
     } catch (err: unknown) {
@@ -172,7 +172,7 @@ function SettingsContent({ id }: { id: string }) {
           {error && <div className={styles.error}>{error}</div>}
           {success && <div className={styles.success}>{success}</div>}
           
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <form id="settings-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div className={styles.inputGroup}>
               <label>Title</label>
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className={styles.input} />
@@ -213,10 +213,6 @@ function SettingsContent({ id }: { id: string }) {
               <label>Description / Welcome Message</label>
               <textarea rows={4} value={description} onChange={(e) => setDescription(e.target.value)} className={styles.input} />
             </div>
-
-            <button type="submit" className={styles.btnPrimary} disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
-            </button>
           </form>
         </div>
 
@@ -262,6 +258,12 @@ function SettingsContent({ id }: { id: string }) {
           {isUploadingGallery && (
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>Uploading...</p>
           )}
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', marginBottom: '2rem' }}>
+          <button type="submit" form="settings-form" className={styles.btnPrimary} disabled={isSubmitting} style={{ padding: '0.75rem 2rem', fontSize: '1.1rem' }}>
+            {isSubmitting ? 'Saving...' : 'Save All Changes'}
+          </button>
         </div>
 
         <div className={styles.sectionCard} style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>

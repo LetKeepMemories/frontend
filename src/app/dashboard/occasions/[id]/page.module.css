@@ -107,17 +107,22 @@
 
 .btnOutline {
   color: var(--primary);
-  padding: 0.6rem 1rem;
-  border-radius: var(--radius-md);
-  font-weight: 500;
-  border: 1px solid var(--primary);
-  transition: all 0.2s;
+  background: transparent;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px; /* Pill shape for premium feel */
+  font-weight: 600;
+  border: 1.5px solid var(--primary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
+  font-size: 0.9rem;
 }
 
 .btnOutline:hover {
   background-color: var(--primary);
-  color: white;
+  color: var(--bg-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 124, 255, 0.3);
 }
 
 .btnDanger {

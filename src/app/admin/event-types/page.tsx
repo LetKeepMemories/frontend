@@ -43,7 +43,7 @@ export default function AdminEventTypesPage() {
     queryKey: ['adminEventTypes'],
     queryFn: async () => {
       const response = await api.get('/admin/event-types/');
-      return response.data;
+      return Array.isArray(response.data) ? response.data : (response.data.results || []);
     },
     enabled: isAuthenticated && user?.user_type === 'admin',
   });
@@ -180,7 +180,7 @@ export default function AdminEventTypesPage() {
                     </span>
                   </td>
                   <td style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button className={styles.btnOutline} onClick={() => setForm(et)} type="button">
+                    <button className={styles.btnOutline} onClick={() => setForm({ ...et, slug: et.slug || '', description: et.description || '' })} type="button">
                       Edit
                     </button>
                     <button

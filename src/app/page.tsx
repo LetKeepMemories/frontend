@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import styles from './page.module.css';
+import ThemedIcon from '@/components/ui/ThemedIcon';
 
 export default function Home() {
   return (
@@ -31,10 +31,7 @@ export default function Home() {
               <div className={styles.abstractShape2}></div>
               <div className={`${styles.glassCard} glass`}>
                 <div className={styles.mockupHeader}>
-                  <picture>
-                    <source srcSet="/logos/icon-dark.jpg" media="(prefers-color-scheme: dark)" />
-                    <Image src="/logos/icon-light.jpg" width={40} height={40} alt="Icon" />
-                  </picture>
+                  <ThemedIcon />
                   <div>
                     <h4>Happy 50th, John!</h4>
                     <p>32 Messages &bull; 15 Photos</p>
