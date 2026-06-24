@@ -13,6 +13,9 @@ interface EventType {
   slug: string;
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const DJANGO_ADMIN_URL = `${API_BASE_URL.replace(/\/api\/?$/, '')}/admin`;
+
 const ADMIN_LINKS = [
   { href: '/admin', label: 'Overview' },
   { href: '/admin/users', label: 'Users & Subscriptions' },
@@ -61,7 +64,7 @@ export default function Sidebar() {
                   </Link>
                 ))}
                 <a
-                  href="http://localhost:8000/admin"
+                  href={DJANGO_ADMIN_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.navLink}
