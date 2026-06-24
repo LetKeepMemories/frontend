@@ -10,29 +10,13 @@ import { getErrorMessage } from '@/lib/errors';
 function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const uid = searchParams.get('uid');
-  const token = searchParams.get('token');
 
+  const [email, setEmail] = useState(searchParams.get('email') || '');
+  const [code, setCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const { confirmPasswordReset, isConfirmingPasswordReset } = useAuth();
-
-  if (!uid || !token) {
-    return (
-      <main className={styles.authContainer}>
-        <div className={styles.authCard}>
-          <h1 className={styles.title}>Invalid link</h1>
-          <p className={styles.subtitle}>
-            This password reset link is missing required information. Request a new one below.
-          </p>
-          <div className={styles.footer}>
-            <Link href="/forgot-password">Request a new link</Link>
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,10 +28,10 @@ function ResetPasswordContent() {
     }
 
     try {
-      await confirmPasswordReset({ uid, token, new_password: newPassword });
+      await confirmPasswordReset({ email, code, new_password: newPassword });
       router.push('/login?reset=success');
     } catch (err: unknown) {
-      setError(getErrorMessage(err, 'This reset link is invalid or has expired.'));
+      setError(getErrorMessage(err, 'Invalid or expired code.'));
     }
   };
 
@@ -55,11 +39,35 @@ function ResetPasswordContent() {
     <main className={styles.authContainer}>
       <div className={styles.authCard}>
         <h1 className={styles.title}>Choose a new password</h1>
-        <p className={styles.subtitle}>Make it something you haven&apos;t used before.</p>
+        <p className={styles.subtitle}>Enter the code we emailed you and pick a new password.</p>
 
         {error && <div className={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.inputGroup}>
+            <label htmlFor="email">Email Address</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className={styles.input}
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label htmlFor="code">Reset Code</label>
+            <input
+              id="code"
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+              required
+              className={styles.input}
+            />
+          </div>
           <div className={styles.inputGroup}>
             <label htmlFor="newPassword">New Password</label>
             <input
@@ -84,11 +92,14 @@ function ResetPasswordContent() {
               className={styles.input}
             />
           </div>
-          <button type="submit" className={styles.btnPrimary} disabled={isConfirmingPasswordReset}>
+          <button type="submit" className={styles.btnPrimary} disabled={isConfirmingPasswordReset || code.length !== 6}>
             {isConfirmingPasswordReset ? 'Saving...' : 'Reset Password'}
           </button>
         </form>
 
+        <div className={styles.footer}>
+          Didn&apos;t get a code? <Link href="/forgot-password">Request a new one</Link>
+        </div>
         <div className={styles.footer}>
           <Link href="/login">Back to sign in</Link>
         </div>

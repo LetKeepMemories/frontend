@@ -49,6 +49,9 @@ export default function ProfilePage() {
   const [securityError, setSecurityError] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [isEmailSubmitting, setIsEmailSubmitting] = useState(false);
+  const [emailOtpStep, setEmailOtpStep] = useState<'idle' | 'sent'>('idle');
+  const [emailOtpCode, setEmailOtpCode] = useState('');
+  const [isConfirmingEmailChange, setIsConfirmingEmailChange] = useState(false);
 
   const [otpStep, setOtpStep] = useState<'idle' | 'sent'>('idle');
   const [otpCode, setOtpCode] = useState('');
@@ -118,7 +121,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleEmailChange = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleRequestEmailChange = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSecurityError('');
     setSecuritySuccess('');
@@ -126,15 +129,34 @@ export default function ProfilePage() {
 
     try {
       const response = await api.post('/auth/change-email/', { new_email: newEmail });
-      setSecuritySuccess(response.data.detail || 'Email updated. Please check your new inbox.');
-      // After a short delay, redirect to login since they are logged out
+      setEmailOtpStep('sent');
+      setSecuritySuccess(response.data.detail || `A verification code has been sent to ${newEmail}.`);
+    } catch (err: unknown) {
+      setSecurityError(getErrorMessage(err, 'Failed to send verification code.'));
+    } finally {
+      setIsEmailSubmitting(false);
+    }
+  };
+
+  const handleConfirmEmailChange = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSecurityError('');
+    setSecuritySuccess('');
+    setIsConfirmingEmailChange(true);
+
+    try {
+      const response = await api.post('/auth/change-email/confirm/', { code: emailOtpCode });
+      setSecuritySuccess(response.data.detail || 'Email updated. Please log in again.');
+      setEmailOtpStep('idle');
+      setEmailOtpCode('');
+      setNewEmail('');
       setTimeout(() => {
         window.location.href = '/login';
       }, 3000);
     } catch (err: unknown) {
-      setSecurityError(getErrorMessage(err, 'Failed to update email.'));
+      setSecurityError(getErrorMessage(err, 'Invalid or expired code.'));
     } finally {
-      setIsEmailSubmitting(false);
+      setIsConfirmingEmailChange(false);
     }
   };
 
@@ -325,18 +347,54 @@ export default function ProfilePage() {
               {/* Change Email */}
               <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)' }}>
                 <h3 style={{ marginBottom: '0.5rem', fontSize: '1.1rem' }}>Change Email Address</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                  Updating your email address will immediately log you out. You must verify your new email address before logging back in.
-                </p>
-                <form onSubmit={handleEmailChange} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
-                  <div className={styles.inputGroup} style={{ flex: 1 }}>
-                    <label>New Email Address</label>
-                    <input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required className={styles.input} />
-                  </div>
-                  <button type="submit" className={styles.btnPrimary} style={{ margin: 0, padding: '0.75rem 1.5rem' }} disabled={isEmailSubmitting}>
-                    {isEmailSubmitting ? 'Updating...' : 'Update Email'}
-                  </button>
-                </form>
+                {emailOtpStep === 'idle' ? (
+                  <>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                      We&apos;ll send a 6-digit code to your new address to confirm you own it. Nothing changes until
+                      you enter that code.
+                    </p>
+                    <form onSubmit={handleRequestEmailChange} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
+                      <div className={styles.inputGroup} style={{ flex: 1 }}>
+                        <label>New Email Address</label>
+                        <input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required className={styles.input} />
+                      </div>
+                      <button type="submit" className={styles.btnPrimary} style={{ margin: 0, padding: '0.75rem 1.5rem' }} disabled={isEmailSubmitting}>
+                        {isEmailSubmitting ? 'Sending...' : 'Send Verification Code'}
+                      </button>
+                    </form>
+                  </>
+                ) : (
+                  <form onSubmit={handleConfirmEmailChange} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>
+                      Enter the 6-digit code we sent to <strong>{newEmail}</strong> to confirm the change. You&apos;ll
+                      need to log in again afterward.
+                    </p>
+                    <div className={styles.inputGroup} style={{ maxWidth: '220px' }}>
+                      <label>Verification Code</label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
+                        value={emailOtpCode}
+                        onChange={(e) => setEmailOtpCode(e.target.value.replace(/\D/g, ''))}
+                        required
+                        className={styles.input}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      <button type="submit" className={styles.btnPrimary} style={{ margin: 0 }} disabled={isConfirmingEmailChange}>
+                        {isConfirmingEmailChange ? 'Updating...' : 'Confirm New Email'}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.btnOutline}
+                        onClick={() => { setEmailOtpStep('idle'); setEmailOtpCode(''); }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
 
               {/* Change Password */}

@@ -67,7 +67,7 @@ export function useAuth() {
   });
 
   const verifyEmailMutation = useMutation({
-    mutationFn: async (payload: { uid: string; token: string }) => {
+    mutationFn: async (payload: { email: string; code: string }) => {
       const response = await api.post('/auth/verify-email/', payload);
       return response.data;
     },
@@ -84,7 +84,7 @@ export function useAuth() {
   });
 
   const confirmPasswordResetMutation = useMutation({
-    mutationFn: async (payload: { uid: string; token: string; new_password: string }) => {
+    mutationFn: async (payload: { email: string; code: string; new_password: string }) => {
       const response = await api.post('/auth/password-reset/confirm/', payload);
       return response.data;
     },
