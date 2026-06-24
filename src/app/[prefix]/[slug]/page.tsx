@@ -38,6 +38,17 @@ interface GalleryImage {
   image_url: string;
 }
 
+interface OccasionCapabilities {
+  allow_video: boolean;
+  allow_audio_message: boolean;
+  max_images_per_message: number;
+  max_videos_per_message: number;
+  max_audio_per_message: number;
+  max_upload_image_size_mb: number;
+  max_upload_video_size_mb: number;
+  max_upload_audio_size_mb: number;
+}
+
 interface PublicOccasion {
   id: string;
   title: string;
@@ -54,6 +65,7 @@ interface PublicOccasion {
   event_date: string | null;
   gallery_images: GalleryImage[];
   metadata: OccasionMetadata;
+  capabilities: OccasionCapabilities;
 }
 
 interface PublicMessage {
@@ -69,7 +81,7 @@ interface GuestMessagePayload {
   sender_last_name: string;
   relationship: string;
   message: string;
-  media: [];
+  media: { media_type: string; url: string; file_size: number }[];
 }
 
 type OccasionMood = 'memorial' | 'birthday' | 'anniversary' | 'generic';
