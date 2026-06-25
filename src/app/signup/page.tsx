@@ -4,7 +4,7 @@ import styles from '../login/page.module.css';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { getErrorMessage } from '@/lib/errors';
+import { getValidationErrors } from '@/lib/errors';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -16,16 +16,16 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<string[]>([]);
   const { signup, isSigningUp } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
+    setErrors([]);
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setErrors(['Passwords do not match.']);
       return;
     }
 
@@ -33,7 +33,7 @@ export default function Signup() {
       await signup({ first_name: firstName, last_name: lastName, email, password });
       router.push(`/verify-email?email=${encodeURIComponent(email)}`);
     } catch (err: unknown) {
-      setError(getErrorMessage(err, 'Signup failed. Please try again later.'));
+      setErrors(getValidationErrors(err, 'Signup failed. Please try again later.'));
     }
   };
 
@@ -43,7 +43,19 @@ export default function Signup() {
         <h1 className={styles.title}>Create Account</h1>
         <p className={styles.subtitle}>Join Lets Keep Memories today</p>
 
-        {error && <div className={styles.error}>{error}</div>}
+        {errors.length > 0 && (
+          <div className={styles.error}>
+            {errors.length === 1 ? (
+              errors[0]
+            ) : (
+              <ul className={styles.errorList}>
+                {errors.map((msg, i) => (
+                  <li key={i}>{msg}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.nameRow}>
