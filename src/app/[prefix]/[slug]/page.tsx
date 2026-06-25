@@ -627,46 +627,54 @@ export default function GuestWishView() {
 
                 <div className={styles.mediaUploadRow} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
                   <div className={styles.inputGroup} style={{ flex: '1 1 200px' }}>
-                    <label>Photo memories (Max {occasion.capabilities?.max_images_per_message || 5})</label>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      multiple 
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files || []);
-                        const max = occasion.capabilities?.max_images_per_message || 5;
-                        if (files.length > max) {
-                          setError(`You can only select up to ${max} images.`);
-                          e.target.value = '';
-                          setImages([]);
-                        } else {
-                          setError('');
-                          setImages(files);
-                        }
-                      }}
-                      className={styles.input}
-                    />
+                    <label style={{ marginBottom: '0.5rem', display: 'block' }}>Photo memories (Max {occasion.capabilities?.max_images_per_message || 5})</label>
+                    <label className={`${styles.fileUploadLabel} ${images.length > 0 ? styles.hasFile : ''}`}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                      <span>{images.length > 0 ? `${images.length} photo(s) selected` : 'Choose Photos'}</span>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        multiple 
+                        onChange={(e) => {
+                          const files = Array.from(e.target.files || []);
+                          const max = occasion.capabilities?.max_images_per_message || 5;
+                          if (files.length > max) {
+                            setError(`You can only select up to ${max} images.`);
+                            e.target.value = '';
+                            setImages([]);
+                          } else {
+                            setError('');
+                            setImages(files);
+                          }
+                        }}
+                        className={styles.hiddenInput}
+                      />
+                    </label>
                   </div>
 
                   {occasion.capabilities?.allow_video && (
                     <div className={styles.inputGroup} style={{ flex: '1 1 200px' }}>
-                      <label>Video memories (Max {occasion.capabilities.max_videos_per_message || 1})</label>
-                      <input 
-                        type="file" 
-                        accept="video/*" 
-                        onChange={(e) => {
-                          const file = e.target.files?.[0] || null;
-                          if (file && file.size > (occasion.capabilities?.max_upload_video_size_mb || 50) * 1024 * 1024) {
-                            setError(`Video must be smaller than ${occasion.capabilities?.max_upload_video_size_mb || 50}MB.`);
-                            e.target.value = '';
-                            setVideo(null);
-                          } else {
-                            setError('');
-                            setVideo(file);
-                          }
-                        }}
-                        className={styles.input}
-                      />
+                      <label style={{ marginBottom: '0.5rem', display: 'block' }}>Video memories (Max {occasion.capabilities.max_videos_per_message || 1})</label>
+                      <label className={`${styles.fileUploadLabel} ${video ? styles.hasFile : ''}`}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                        <span>{video ? '1 video selected' : 'Choose Video'}</span>
+                        <input 
+                          type="file" 
+                          accept="video/*" 
+                          onChange={(e) => {
+                            const file = e.target.files?.[0] || null;
+                            if (file && file.size > (occasion.capabilities?.max_upload_video_size_mb || 50) * 1024 * 1024) {
+                              setError(`Video must be smaller than ${occasion.capabilities?.max_upload_video_size_mb || 50}MB.`);
+                              e.target.value = '';
+                              setVideo(null);
+                            } else {
+                              setError('');
+                              setVideo(file);
+                            }
+                          }}
+                          className={styles.hiddenInput}
+                        />
+                      </label>
                     </div>
                   )}
 
@@ -678,10 +686,10 @@ export default function GuestWishView() {
                           <button 
                             type="button" 
                             onClick={startRecording}
-                            className={styles.btnOutline}
-                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: 'fit-content' }}
+                            className={styles.fileUploadLabel}
                           >
-                            🎙️ Start Recording
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/><line x1="8" x2="16" y1="22" y2="22"/></svg>
+                            <span>Start Recording Audio</span>
                           </button>
                         )}
                         
