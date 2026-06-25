@@ -533,7 +533,7 @@ export default function GuestWishView() {
                 <h2 className={styles.successTitle}>Message Sent!</h2>
                 <p className={styles.successBody}>{copy.successMessage}</p>
                 <button
-                  className={styles.btnOutline}
+                  className={styles.btnPrimary}
                   onClick={() => { setSubmitted(false); setSuccess(false); }}
                 >
                   Send Another Message
