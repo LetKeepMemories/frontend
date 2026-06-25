@@ -162,3 +162,31 @@
   color: var(--text-muted);
   font-size: 1.2rem;
 }
+
+@media (max-width: 640px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .pageHeader .btnPrimary {
+    text-align: center;
+  }
+
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cardActions {
+    flex-direction: column;
+  }
+
+  .cardActions a {
+    text-align: center;
+  }
+}

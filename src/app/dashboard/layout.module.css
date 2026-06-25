@@ -164,7 +164,22 @@
     border-bottom: 1px solid var(--border-color);
     padding: 1rem;
   }
-  
+
+  /* On the stacked mobile layout the sidebar is no longer a fixed-height
+     side column, so the sticky/scroll-locked nav would otherwise eat the
+     whole viewport (especially the long admin link list) before the user
+     ever reaches the page they navigated to. */
+  .sidebarContent {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+    padding: 0;
+  }
+
+  .sidebarFooter {
+    position: static;
+  }
+
   .mainContent {
     padding: 1rem;
   }

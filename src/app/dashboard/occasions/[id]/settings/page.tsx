@@ -178,12 +178,12 @@ function SettingsContent({ id }: { id: string }) {
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className={styles.input} />
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div className={styles.inputGroup} style={{ flex: 1 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+              <div className={styles.inputGroup} style={{ flex: '1 1 160px' }}>
                 <label>Custom URL Path</label>
                 <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} className={styles.input} />
               </div>
-              <div className={styles.inputGroup} style={{ flex: 1 }}>
+              <div className={styles.inputGroup} style={{ flex: '1 1 160px' }}>
                 <label>Status</label>
                 <select value={status} onChange={(e) => setStatus(e.target.value)} className={styles.input}>
                   <option value="draft">Draft</option>
@@ -193,12 +193,12 @@ function SettingsContent({ id }: { id: string }) {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div className={styles.inputGroup} style={{ flex: 1 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+              <div className={styles.inputGroup} style={{ flex: '1 1 160px' }}>
                 <label>Honoree First Name</label>
                 <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required className={styles.input} />
               </div>
-              <div className={styles.inputGroup} style={{ flex: 1 }}>
+              <div className={styles.inputGroup} style={{ flex: '1 1 160px' }}>
                 <label>Honoree Last Name</label>
                 <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className={styles.input} />
               </div>

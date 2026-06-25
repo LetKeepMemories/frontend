@@ -225,12 +225,12 @@ export default function ProfilePage() {
                   <input type="text" value={user?.email || ''} disabled className={styles.input} style={{ opacity: 0.6 }} />
                 </div>
 
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <div className={styles.inputGroup} style={{ flex: 1 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div className={styles.inputGroup} style={{ flex: '1 1 160px' }}>
                     <label>First Name</label>
                     <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required className={styles.input} />
                   </div>
-                  <div className={styles.inputGroup} style={{ flex: 1 }}>
+                  <div className={styles.inputGroup} style={{ flex: '1 1 160px' }}>
                     <label>Last Name</label>
                     <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required className={styles.input} />
                   </div>
@@ -353,8 +353,8 @@ export default function ProfilePage() {
                       We&apos;ll send a 6-digit code to your new address to confirm you own it. Nothing changes until
                       you enter that code.
                     </p>
-                    <form onSubmit={handleRequestEmailChange} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
-                      <div className={styles.inputGroup} style={{ flex: 1 }}>
+                    <form onSubmit={handleRequestEmailChange} style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'flex-end' }}>
+                      <div className={styles.inputGroup} style={{ flex: '1 1 200px' }}>
                         <label>New Email Address</label>
                         <input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required className={styles.input} />
                       </div>
@@ -381,7 +381,7 @@ export default function ProfilePage() {
                         className={styles.input}
                       />
                     </div>
-                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
                       <button type="submit" className={styles.btnPrimary} style={{ margin: 0 }} disabled={isConfirmingEmailChange}>
                         {isConfirmingEmailChange ? 'Updating...' : 'Confirm New Email'}
                       </button>
@@ -419,8 +419,8 @@ export default function ProfilePage() {
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>
                       Enter the 6-digit code we sent to <strong>{user?.email}</strong> along with your new password.
                     </p>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                      <div className={styles.inputGroup} style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div className={styles.inputGroup} style={{ flex: '1 1 160px' }}>
                         <label>Verification Code</label>
                         <input
                           type="text"
@@ -432,7 +432,7 @@ export default function ProfilePage() {
                           className={styles.input}
                         />
                       </div>
-                      <div className={styles.inputGroup} style={{ flex: 1 }}>
+                      <div className={styles.inputGroup} style={{ flex: '1 1 160px' }}>
                         <label>New Password</label>
                         <input
                           type="password"
@@ -444,7 +444,7 @@ export default function ProfilePage() {
                         />
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
                       <button type="submit" className={styles.btnPrimary} style={{ margin: 0 }} disabled={isConfirmingPasswordChangeOtp}>
                         {isConfirmingPasswordChangeOtp ? 'Changing...' : 'Confirm New Password'}
                       </button>

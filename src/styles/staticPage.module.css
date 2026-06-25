@@ -96,3 +96,17 @@
   font-weight: 600;
   color: var(--primary);
 }
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 2.5rem 0 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: 1.85rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+}

@@ -249,3 +249,28 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@media (max-width: 640px) {
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+
+  .sectionCard {
+    padding: 1.25rem;
+  }
+
+  .btnPrimary {
+    align-self: stretch;
+    text-align: center;
+  }
+
+  .plansGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .toastError {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+}

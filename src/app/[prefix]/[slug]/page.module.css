@@ -153,8 +153,9 @@
 
 .datesRow {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 3rem;
+  gap: 1.5rem 3rem;
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid rgba(255,255,255,0.2);
@@ -375,4 +376,25 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 3rem 1.25rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1.05rem;
+  }
+
+  /* The sticky offset only makes sense next to a tall sidebar column;
+     once .grid collapses to a single column the form just sits below
+     the message list, so sticking it mid-scroll has no benefit. */
+  .formCard {
+    position: static;
+  }
 }

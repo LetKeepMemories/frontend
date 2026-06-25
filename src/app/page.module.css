@@ -290,4 +290,13 @@
   .heroTitle {
     font-size: 2.5rem;
   }
+
+  .sectionHeader h2,
+  .ctaCard h2 {
+    font-size: 2rem;
+  }
+
+  .ctaCard {
+    padding: 3rem 1.5rem;
+  }
 }
