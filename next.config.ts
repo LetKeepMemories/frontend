@@ -15,7 +15,16 @@ const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
   async rewrites() {
     return [
-      { source: "/api/:path*", destination: `${BACKEND_ORIGIN}/api/:path*/` },
+      // Strip any trailing slash that :path* may have captured, then add
+      // exactly one back so Django's APPEND_SLASH never sees a double slash.
+      {
+        source: "/api/:path*/",
+        destination: `${BACKEND_ORIGIN}/api/:path*/`,
+      },
+      {
+        source: "/api/:path*",
+        destination: `${BACKEND_ORIGIN}/api/:path*/`,
+      },
     ];
   },
 };

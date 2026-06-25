@@ -32,6 +32,7 @@ interface OccasionMessage {
   relationship: string;
   message: string;
   created_at: string;
+  is_hidden: boolean;
   media: MediaItem[];
 }
 
@@ -76,8 +77,20 @@ export default function ManageOccasion() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['occasionMessages', id] });
+      queryClient.invalidateQueries({ queryKey: ['occasion', id] });
     },
     onError: (err: unknown) => setError(getErrorMessage(err, 'Failed to delete message.')),
+  });
+
+  const hideMutation = useMutation({
+    mutationFn: async (messageId: string) => {
+      const response = await api.patch(`/occasions/${id}/messages/${messageId}/`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['occasionMessages', id] });
+    },
+    onError: (err: unknown) => setError(getErrorMessage(err, 'Failed to update message.')),
   });
 
   const handleDelete = (messageId: string) => {
@@ -169,8 +182,11 @@ export default function ManageOccasion() {
                     const hasVisualMedia = msg.media?.some(m => m.media_type === 'IMAGE' || m.media_type === 'VIDEO');
                     
                     return (
-                      <tr key={msg.id}>
-                        <td className={styles.senderCell}>{msg.sender_full_name}</td>
+                      <tr key={msg.id} className={msg.is_hidden ? styles.rowHidden : ''}>
+                        <td className={styles.senderCell}>
+                          {msg.sender_full_name}
+                          {msg.is_hidden && <span className={styles.hiddenBadge}>Hidden</span>}
+                        </td>
                         <td className={styles.relCell}>{msg.relationship || '-'}</td>
                         <td className={styles.msgCell}>
                           <div className={styles.msgTruncate}>{msg.message || '-'}</div>
@@ -198,6 +214,15 @@ export default function ManageOccasion() {
                             type="button"
                           >
                             Details
+                          </button>
+                          <button
+                            onClick={() => hideMutation.mutate(msg.id)}
+                            className={msg.is_hidden ? styles.btnUnhide : styles.btnHide}
+                            disabled={hideMutation.isPending}
+                            type="button"
+                            title={msg.is_hidden ? 'Make visible on public page' : 'Hide from public page'}
+                          >
+                            {msg.is_hidden ? 'Unhide' : 'Hide'}
                           </button>
                           <button
                             onClick={() => handleDelete(msg.id)}

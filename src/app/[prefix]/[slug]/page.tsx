@@ -180,6 +180,7 @@ export default function GuestWishView() {
   const [video, setVideo] = useState<File | null>(null);
   const [audio, setAudio] = useState<File | null>(null);
   const [success, setSuccess] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [uploadProgress, setUploadProgress] = useState('');
 
@@ -285,6 +286,7 @@ export default function GuestWishView() {
     },
     onSuccess: () => {
       setSuccess(true);
+      setSubmitted(true);
       setSenderFirstName('');
       setSenderLastName('');
       setRelationship('');
@@ -292,9 +294,9 @@ export default function GuestWishView() {
       setImages([]);
       setVideo(null);
       setAudio(null);
+      setAudioBlobUrl(null);
       setUploadProgress('');
       refetch();
-      setTimeout(() => setSuccess(false), 5000);
     },
     onError: (err: unknown) => {
       setError(getErrorMessage(err, 'Failed to submit message.'));
@@ -520,6 +522,24 @@ export default function GuestWishView() {
           </div>
 
           <div className={styles.formColumn}>
+            {submitted ? (
+              <div className={styles.successCard}>
+                <div className={styles.successIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="9 12 11 14 15 10"/>
+                  </svg>
+                </div>
+                <h2 className={styles.successTitle}>Message Sent!</h2>
+                <p className={styles.successBody}>{copy.successMessage}</p>
+                <button
+                  className={styles.btnOutline}
+                  onClick={() => { setSubmitted(false); setSuccess(false); }}
+                >
+                  Send Another Message
+                </button>
+              </div>
+            ) : (
             <div className={styles.formCard}>
               <h2 className={styles.sectionTitle} style={{ margin: '0 0 1.5rem 0' }}>{copy.formTitle}</h2>
 
@@ -707,6 +727,7 @@ export default function GuestWishView() {
                 </button>
               </form>
             </div>
+            )}
           </div>
 
         </div>
