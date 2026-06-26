@@ -129,7 +129,7 @@ export default function ManageOccasion() {
           <div className={styles.linkRow}>
             <input
               readOnly
-              value={occasion.public_url}
+              value={new URL(occasion.public_url, window.location.origin).toString()}
               className={styles.linkInput}
               onFocus={(e) => e.target.select()}
               aria-label="Public link"
@@ -140,7 +140,7 @@ export default function ManageOccasion() {
             <Link href={`/dashboard/occasions/${id}/settings`} className={styles.btnSecondary}>
               Settings & Media
             </Link>
-            <a href={occasion.public_url} target="_blank" rel="noopener noreferrer" className={styles.btnOutline}>
+            <a href={new URL(occasion.public_url, window.location.origin).toString()} target="_blank" rel="noopener noreferrer" className={styles.btnOutline}>
               View Public Page
             </a>
           </div>

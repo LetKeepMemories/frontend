@@ -101,7 +101,7 @@ export default function AdminOccasionsPage() {
                   <td>{occ.message_count}</td>
                   <td>{new Date(occ.created_at).toLocaleDateString()}</td>
                   <td style={{ display: 'flex', gap: '0.5rem' }}>
-                    <a href={occ.public_url} target="_blank" rel="noopener noreferrer" className={styles.btnOutline}>
+                    <a href={new URL(occ.public_url, window.location.origin).toString()} target="_blank" rel="noopener noreferrer" className={styles.btnOutline}>
                       View
                     </a>
                     <button
