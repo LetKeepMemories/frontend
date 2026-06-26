@@ -104,6 +104,15 @@ export function useAuth() {
     },
   });
 
+  const googleLoginMutation = useMutation({
+    mutationFn: async (id_token: string) => {
+      const response = await api.post('/auth/google-login/', { id_token });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(['me'], data);
+    },
+  });
   const logoutMutation = useMutation({
     mutationFn: async () => {
       await api.post('/auth/logout/');
@@ -147,5 +156,7 @@ export function useAuth() {
 
     logout: logoutMutation.mutate,
     isLoggingOut: logoutMutation.isPending,
+    googleLogin: googleLoginMutation.mutateAsync,
+    isGoogleSigningIn: googleLoginMutation.isPending,
   };
 }

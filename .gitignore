@@ -42,3 +42,4 @@ next-env.d.ts
 convert.py
 remove_bg.py
 .next/
+.env

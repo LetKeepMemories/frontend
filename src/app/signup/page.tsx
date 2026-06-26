@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { getValidationErrors } from '@/lib/errors';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
@@ -17,7 +18,7 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
-  const { signup, isSigningUp } = useAuth();
+  const { signup, isSigningUp, googleLogin, isGoogleSigningIn } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -137,9 +138,27 @@ export default function Signup() {
               </button>
             </div>
           </div>
-          <button type="submit" className={styles.btnPrimary} disabled={isSigningUp}>
-            {isSigningUp ? 'Creating Account...' : 'Sign Up'}
+          <button type="submit" className={styles.btnPrimary} disabled={isSigningUp || isGoogleSigningIn}>
+            {isSigningUp || isGoogleSigningIn ? 'Creating Account...' : 'Sign Up'}
           </button>
+          <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+            <GoogleLogin
+              text="signup_with"
+              onSuccess={async (credentialResponse) => {
+                if (credentialResponse.credential) {
+                  try {
+                    await googleLogin(credentialResponse.credential);
+                    router.push('/dashboard');
+                  } catch (err: any) {
+                    setErrors([err.message || 'Google Sign Up failed.']);
+                  }
+                }
+              }}
+              onError={() => {
+                setErrors(['Google Sign Up failed.']);
+              }}
+            />
+          </div>
         </form>
 
         <div className={styles.footer}>

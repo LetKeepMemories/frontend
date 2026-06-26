@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
 import { ThemeProvider } from 'next-themes';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -21,10 +22,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
-      <QueryClientProvider client={queryClient}>
-        {children}
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </GoogleOAuthProvider>
     </ThemeProvider>
   );
 }

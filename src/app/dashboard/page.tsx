@@ -82,7 +82,9 @@ function DashboardContent() {
   const totalMessages = occasions?.reduce((sum, o) => sum + (o.message_count ?? 0), 0) ?? 0;
 
   const handleCopyLink = (occ: Occasion) => {
-    navigator.clipboard.writeText(occ.public_url).then(() => {
+    // Copy the full absolute URL to clipboard
+    const absoluteUrl = new URL(occ.public_url, window.location.origin).toString();
+    navigator.clipboard.writeText(absoluteUrl).then(() => {
       setCopiedId(occ.id);
       setTimeout(() => setCopiedId(null), 2000);
     });

@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { getErrorCode, getErrorMessage } from '@/lib/errors';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 function ResetSuccessBanner() {
   const searchParams = useSearchParams();
@@ -19,7 +20,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const { login, isLoggingIn } = useAuth();
+  const { login, isLoggingIn, googleLogin, isGoogleSigningIn } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -87,9 +88,26 @@ export default function Login() {
           <div className={styles.linkRow}>
             <Link href="/forgot-password">Forgot password?</Link>
           </div>
-          <button type="submit" className={styles.btnPrimary} disabled={isLoggingIn}>
-            {isLoggingIn ? 'Signing In...' : 'Sign In'}
-          </button>
+<button type="submit" className={styles.btnPrimary} disabled={isLoggingIn || isGoogleSigningIn}>
+  {isLoggingIn || isGoogleSigningIn ? 'Signing In...' : 'Sign In'}
+</button>
+<div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+  <GoogleLogin
+    onSuccess={async (credentialResponse) => {
+      if (credentialResponse.credential) {
+        try {
+          await googleLogin(credentialResponse.credential);
+          router.push('/dashboard');
+        } catch (err) {
+          setError(getErrorMessage(err, 'Google Sign In failed.'));
+        }
+      }
+    }}
+    onError={() => {
+      setError('Google Sign In failed.');
+    }}
+  />
+</div>
         </form>
 
         <div className={styles.footer}>
