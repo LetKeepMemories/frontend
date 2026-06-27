@@ -115,7 +115,7 @@ function DashboardContent() {
           <div className={styles.statsRow}>
             <div className={styles.statCard}>
               <span className={styles.statNumber}>{totalOccasions}</span>
-              <span className={styles.statLabel}>{activeType ? 'Occasions (this type)' : 'Total Occasions'}</span>
+              <span className={styles.statLabel}>Total Occasions</span>
             </div>
             <div className={styles.statCard}>
               <span className={styles.statNumber}>{totalMessages}</span>
