@@ -45,12 +45,27 @@ export function getValidationErrors(
       if (messages.length > 0) return messages;
     }
 
+    // Check if the detail string looks like a raw Python error
+    const isRawError = (str: string) => {
+      const lower = str.toLowerCase();
+      return (
+        lower.includes('object has no attribute') ||
+        lower.includes('traceback (most recent call') ||
+        lower.includes('django.') ||
+        lower.includes('exception:') ||
+        lower.includes('typeerror:') ||
+        lower.includes('valueerror:') ||
+        lower.includes('keyerror:')
+      );
+    };
+
     // Simple { detail: "..." } shape — use it directly (unless it's the
     // generic "Validation failed." wrapper which is unhelpful on its own).
     if (
       typeof data.detail === 'string' &&
       data.detail.toLowerCase() !== 'validation failed.'
     ) {
+      if (isRawError(data.detail)) return [fallback];
       return [data.detail];
     }
 
@@ -58,7 +73,12 @@ export function getValidationErrors(
     const firstFieldError = Object.values(data)
       .flat()
       .find((value) => typeof value === 'string');
-    if (firstFieldError) return [firstFieldError as string];
+    
+    if (firstFieldError) {
+      const msg = firstFieldError as string;
+      if (isRawError(msg)) return [fallback];
+      return [msg];
+    }
   }
   return [fallback];
 }
