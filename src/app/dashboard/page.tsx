@@ -2,7 +2,7 @@
 
 import styles from './page.module.css';
 import { useAuth } from '@/hooks/useAuth';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useEffect, Suspense, useState } from 'react';
@@ -44,6 +44,18 @@ function DashboardContent() {
   const searchParams = useSearchParams();
   const activeType = searchParams.get('type');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Occasion | null>(null);
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/occasions/${id}/`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['occasions'] });
+      setPendingDelete(null);
+    },
+  });
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -163,6 +175,13 @@ function DashboardContent() {
                   <Link href={`/dashboard/occasions/${occ.id}`} className={styles.btnSecondary}>
                     Manage
                   </Link>
+                  <button
+                    className={styles.btnDanger}
+                    onClick={() => setPendingDelete(occ)}
+                    type="button"
+                  >
+                    Delete
+                  </button>
                 </div>
                 <div className={styles.publicLinkRow}>
                   <a
@@ -207,6 +226,41 @@ function DashboardContent() {
           </div>
         )}
       </main>
+
+      {/* ── Delete confirmation modal ──────────────────── */}
+      {pendingDelete && (
+        <div className={styles.modalOverlay} onClick={() => setPendingDelete(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalIcon}>🗑️</div>
+            <h3 className={styles.modalTitle}>Delete Occasion?</h3>
+            <p className={styles.modalBody}>
+              You are about to permanently delete{' '}
+              <strong>&ldquo;{pendingDelete.title}&rdquo;</strong>.
+            </p>
+            <p className={styles.modalWarning}>
+              ⚠️ This will also delete all messages and media attached to this occasion. This action cannot be undone.
+            </p>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.btnSecondary}
+                onClick={() => setPendingDelete(null)}
+                type="button"
+                disabled={deleteMutation.isPending}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.btnDanger}
+                onClick={() => deleteMutation.mutate(pendingDelete.id)}
+                type="button"
+                disabled={deleteMutation.isPending}
+              >
+                {deleteMutation.isPending ? 'Deleting…' : 'Yes, Delete Everything'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

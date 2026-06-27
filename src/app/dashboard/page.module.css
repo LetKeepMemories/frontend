@@ -195,6 +195,14 @@
   .statsRow {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .statCard {
+    padding: 1rem;
+  }
+
+  .statNumber {
+    font-size: 1.5rem;
+  }
 }
 
 /* ── Stats Overview ─────────────────────────────────── */
@@ -314,4 +322,107 @@
   border-color: var(--primary);
 }
 
+/* ── Delete Button ──────────────────────────────────── */
+.btnDanger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  color: #ef4444;
+  background: transparent;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  border: 1px solid #ef4444;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
 
+.btnDanger:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btnDanger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Delete Confirmation Modal ──────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal {
+  background: var(--card-bg, #fff);
+  border-radius: var(--radius-xl, 1rem);
+  border: 1px solid var(--border-color);
+  max-width: 420px;
+  width: 100%;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: modalPop 0.25s ease-out;
+}
+
+.modalIcon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.modalTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: var(--text-main);
+}
+
+.modalBody {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0 0 0.5rem;
+  line-height: 1.5;
+}
+
+.modalWarning {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md, 0.5rem);
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0.75rem 0 1.5rem;
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.modalActions button {
+  flex: 1;
+  padding: 0.7rem 1rem;
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
