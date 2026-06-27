@@ -80,7 +80,7 @@ export default function Sidebar() {
             </>
           )}
 
-          <div className={styles.navSectionTitle}>My Workspace</div>
+          <div className={styles.navSectionTitle}>My Occasions</div>
           {isLoading ? (
             <div className={styles.loadingNav}>Loading types...</div>
           ) : (
