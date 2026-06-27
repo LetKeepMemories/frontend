@@ -75,11 +75,13 @@ function DashboardContent() {
     ? occasions?.filter(occ => occ.event_type?.slug === activeType)
     : occasions;
 
-  // Stats derived from fetched data — no extra API call needed
-  const totalOccasions = occasions?.length ?? 0;
-  const publishedCount = occasions?.filter(o => o.status === 'published').length ?? 0;
-  const draftCount = occasions?.filter(o => o.status === 'draft').length ?? 0;
-  const totalMessages = occasions?.reduce((sum, o) => sum + (o.message_count ?? 0), 0) ?? 0;
+  // Stats reflect the active filter: all occasions when no type is selected,
+  // or only the occasions for the selected event type.
+  const statSource = filteredOccasions;
+  const totalOccasions = statSource?.length ?? 0;
+  const publishedCount = statSource?.filter(o => o.status === 'published').length ?? 0;
+  const draftCount = statSource?.filter(o => o.status === 'draft').length ?? 0;
+  const totalMessages = statSource?.reduce((sum, o) => sum + (o.message_count ?? 0), 0) ?? 0;
 
   const handleCopyLink = (occ: Occasion) => {
     // Copy the full absolute URL to clipboard
@@ -113,7 +115,7 @@ function DashboardContent() {
           <div className={styles.statsRow}>
             <div className={styles.statCard}>
               <span className={styles.statNumber}>{totalOccasions}</span>
-              <span className={styles.statLabel}>Total Occasions</span>
+              <span className={styles.statLabel}>{activeType ? 'Occasions (this type)' : 'Total Occasions'}</span>
             </div>
             <div className={styles.statCard}>
               <span className={styles.statNumber}>{totalMessages}</span>
