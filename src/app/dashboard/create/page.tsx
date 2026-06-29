@@ -81,8 +81,6 @@ function CreateOccasionContent() {
   const [designation, setDesignation] = useState('');
 
   // Anniversary specific
-  const [partner2FirstName, setPartner2FirstName] = useState('');
-  const [partner2LastName, setPartner2LastName] = useState('');
   const [anniversaryMilestone, setAnniversaryMilestone] = useState('');
 
   // Dates & Locations
@@ -194,8 +192,6 @@ function CreateOccasionContent() {
           finalBirthDate = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
         }
       } else if (eventType === 'anniversary') {
-        metadata.partner_2_first_name = partner2FirstName;
-        metadata.partner_2_last_name = partner2LastName;
         metadata.anniversary_milestone = anniversaryMilestone;
       }
 
@@ -439,29 +435,14 @@ function CreateOccasionContent() {
               </>
             ) : eventType === 'anniversary' ? (
               <>
-                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', marginBottom: '2rem' }}>
-                  <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', color: 'var(--text-secondary)' }}>Partners</h3>
-                  
-                  <div className={styles.nameRow} style={{ marginBottom: '1.5rem' }}>
-                    <div className={styles.inputGroup}>
-                      <label htmlFor="firstName">Partner 1 First Name</label>
-                      <input id="firstName" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required className={styles.input} />
-                    </div>
-                    <div className={styles.inputGroup}>
-                      <label htmlFor="lastName">Partner 1 Last Name</label>
-                      <input id="lastName" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className={styles.input} />
-                    </div>
+                <div className={styles.nameRow} style={{ marginBottom: '1.5rem' }}>
+                  <div className={styles.inputGroup}>
+                    <label htmlFor="firstName">Honoree&apos;s First Name</label>
+                    <input id="firstName" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required className={styles.input} />
                   </div>
-
-                  <div className={styles.nameRow}>
-                    <div className={styles.inputGroup}>
-                      <label htmlFor="partner2FirstName">Partner 2 First Name</label>
-                      <input id="partner2FirstName" type="text" value={partner2FirstName} onChange={(e) => setPartner2FirstName(e.target.value)} required className={styles.input} />
-                    </div>
-                    <div className={styles.inputGroup}>
-                      <label htmlFor="partner2LastName">Partner 2 Last Name</label>
-                      <input id="partner2LastName" type="text" value={partner2LastName} onChange={(e) => setPartner2LastName(e.target.value)} className={styles.input} />
-                    </div>
+                  <div className={styles.inputGroup}>
+                    <label htmlFor="lastName">Honoree&apos;s Last Name</label>
+                    <input id="lastName" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className={styles.input} />
                   </div>
                 </div>
 
@@ -478,7 +459,7 @@ function CreateOccasionContent() {
 
                 <div className={styles.inputGroup}>
                   <label htmlFor="bio">Our Story / Welcome Message</label>
-                  <textarea id="bio" rows={4} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Welcome guests and share a brief story about the couple..." className={styles.input} />
+                  <textarea id="bio" rows={4} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Welcome guests and share a brief story about the honoree..." className={styles.input} />
                 </div>
               </>
             ) : (
